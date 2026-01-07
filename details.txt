@@ -1,0 +1,54 @@
+Llama 3.2 included lightweight models in 1B and 3B sizes at bfloat16 (BF16) precision. Subsequent to the release, we updated Llama 3.2 to include quantized versions of these models. This section describes these updated lightweight models, how to obtain them, and what use cases they support.
+
+Note that we have quantized only the instruct versions of the Llama 3.2 lightweight models, and that these quantized models have a reduced context length of 8k.
+For in-depth technical information about the Llama 3.2 lightweight models–including the new quantized versions–see the model card on GitHub.
+
+Download the Llama 3.2 lightweight models.
+
+For more general information about quantization for Llama, see the Quantization How-To Guide.
+
+Fast, Compact, Accurate–and Safe
+The new quantized models are substantially faster than their non-quantized (BF16) counterparts. The quantized models also have a much lower memory footprint and lower power consumption. At the same time though, they retain nearly the same accuracy as the non-quantized versions.
+
+In addition, because these models were trained and evaluated using Meta’s data and frameworks, they have the same levels of trust and safety as other models in the Llama collection.
+
+The model card for Llama 3.2 has been updated with performance data that shows how the quantized models compare with the non-quantized versions.
+
+Getting the Models
+You can download the models directly from our download page. Just specify the Llama 3.2 lightweight models (1B/3B) and the quantized versions will be included along with the BF16 versions.
+
+Using the Models
+The quantized models are appropriate for any use case that involves constrained memory conditions or the need to conserve power. Typical environments include phones, tablets, and other edge devices, such as smart glasses.
+
+The models have been optimized to use ExecuTorch as their runtime environment. The ExecuTorch repository on GitHub contains a complete end-to-end example of how to build and deploy the models with ExecuTorch. The example includes guidance to enable you to verify the performance enhancements described above.
+
+The ExecuTorch repository also contains example demo apps for Android and iOS that you can use to explore potential application use cases.
+
+Drop-In Replacement for BF16 Models
+The quantized models are functionally equivalent to the BF16 versions. Prompts designed with the non-quantized models will work without modification on the quantized models. For how to design prompts to access the features of the lightweight models, see the prompt guidance section.
+
+Similarly, the quantized models are fully compatible with the Llama Guard 3 trust and safety companion models. For more information about leveraging Llama Guard 3 to enhance the safety of your models see the Llama Guard 3 page.
+
+Quantization Techniques
+For each model weight, 1B and 3B, we built two quantized versions, for a total of four quantized models. One set of quantized versions uses Quantized Aware Training (QAT) combined with Low-Rank Adaptation (LoRA). The other set uses SpinQuant. This section provides some technical details on these two approaches. For more in-depth information, see the research papers listed in the References section below.
+
+Quantization-Aware Training and LoRA
+Quantization-Aware Training (QAT) simulates the effects of quantization during the training of the Llama 3.2 models, which enables us to optimize their performance in low precision environments. To initialize QAT, we utilize BF16 Llama 3.2 model checkpoints obtained after supervised fine-tuning (SFT), then perform an additional full round of SFT training with QAT. We then freeze the backbone of the QAT model and perform another round of SFT with low-rank adaptation (LoRA) adaptors applied to all layers within the transformer block. Meanwhile, the LoRA adaptors' weights and activations are maintained in bfloat16, similar to QLoRA.
+
+Finally, we fine-tune the resulting model (both backbone and LoRA adaptors) using direct preference optimization (DPO). The result is a highly efficient model that achieves accuracy that is competitive with the original BF16 model, while maintaining speed and a memory footprint comparable to other quantization methods.
+
+We used PyTorch Architecture Optimization (torchao) to do QAT. You can use QAT as a foundational model and use LoRA to fine-tune Llama for your bespoke use cases, saving time and computational cost.
+
+SpinQuant
+SpinQuant is a state-of-the-art technique for post-training quantization. For the SpinQuant models, we utilized WikiText 2, a small calibration dataset, to learn the SpinQuant rotation matrices. These matrices enable the smoothing of outliers and facilitate more effective quantization. After this, we applied best practices in quantization such as range setting and generative post-training quantization (GPTQ). The SpinQuant matrices are optimized for the same quantization scheme as QAT + LoRA.
+
+A key advantage of SpinQuant is its ability to operate without requiring access to training datasets, which are often private. It is an attractive solution for applications where data availability or computational resources are limited.
+
+Some developers might want to quantize their fine-tuned 1B and 3B models, or quantize the models for different targets with different quantization settings. For this reason we also provide the methodology for SpinQuant. You can use this methodology to take your own fine-tuned Llama models and quantize them for different hardware targets and use cases with our open-source SpinQuant repository–which is fully ExecuTorch compatible.
+
+Common Configuration Settings
+For both quantization methods, QAT+LoRA and SpinQuant, we used the following quantization scheme:
+
+We quantize all linear layers in all transformer blocks to a 4-bit groupwise scheme, with a group size of 32, for weights; and 8-bit per token dynamic quantization for activations.
+The classification layer is quantized to 8-bit per channel for weight and 8-bit per token dynamic quantization for activation.
+We employ an 8-bit per channel quantization for embedding.
