@@ -65,16 +65,13 @@ Security and license
 - Add an explicit LICENSE file to this repo if you want to publish under a specific license.
 
 Dataset and training details
-- Dataset: The model was finetuned on a text-to-SQL dataset (please update this section with the exact dataset name(s), fraction, and preprocess steps).\
+- Dataset: The model was finetuned on a b-mc2/sql-create-context dataset (please update.\
 - Notebook: see `Notebook/Model Finetuning.ipynb` for training code and hyperparameters.\
 - Training artifacts: adapter configs are in `llama3-sql-lora/adapter_config.json`.\
-
-If you want, I can update this README with the exact dataset name (e.g., Spider, Text-to-SQL variant, or your custom dataset) and the training hyperparameters; paste those details or allow me to extract them from the notebook.
 
 Contributing
 - Feel free to open issues or PRs. If adding large model files, use Git LFS as above.
 
 Contact
-- Maintainer: Saptarshi Banik
-Llama 3.2 3B Model FineTuning and performance
-trained on Modal AI 
+- Maintainer: Saptarshi Banik\
+Llama 3.2 3B Model FineTuning and performance trained on Modal AI 
