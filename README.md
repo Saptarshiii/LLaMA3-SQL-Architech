@@ -1,6 +1,6 @@
 # LLaMA3-SQL-Architech
 
-This repository contains a small project that fine-tunes a Llama 3 base model on a text-to-SQL dataset and a lightweight Streamlit UI to generate SQL given a database schema and a natural-language question.
+This repository contains a Notebook that shows the process of  finetuning a Llama 3.3 3 Billion base model on a text-to-SQL dataset and a lightweight Streamlit UI to generate SQL given a database schema and a natural-language question.
 
 High-level contents
 - `app.py` — Streamlit application to interact with the finetuned model locally
@@ -59,11 +59,6 @@ git lfs track "*.safetensors"
 git add .gitattributes
 git commit -m "track safetensors with git-lfs"
 ```
-
-Security and license
-- This repository and the finetuned adapter are provided "as-is". Make sure you have rights to share any datasets used for finetuning.
-- Add an explicit LICENSE file to this repo if you want to publish under a specific license.
-
 Dataset and training details
 - Dataset: The model was finetuned on a b-mc2/sql-create-context dataset (please update.\
 - Notebook: see `Notebook/Model Finetuning.ipynb` for training code and hyperparameters.\
